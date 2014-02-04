@@ -52,8 +52,9 @@ if ( sourceFolder != null )
         destFolder = Folder.selectDialog( 'Select the folder where you want to save the converted PNG files.', '~' );
         for ( i = 0; i < files.length; i++ )
         {
-            saveToRes(files[i], 100.0, '');
-            saveToRes(files[i], 200.0, '@2x');
+            saveToRes(files[i], 100.0, '', '');
+            saveToRes(files[i], 200.0, '@2x', '');
+            saveToRes(files[i], 100.0, '', 'web');
         }
         alert( 'Files are saved as PNG in ' + destFolder );
     }
@@ -63,12 +64,12 @@ if ( sourceFolder != null )
     }
 }
 
-function saveToRes(file, resolution, postfix) {
+function saveToRes(file, resolution, postfix, dirName) {
 
     sourceDoc = app.open(file); // returns the document object
 
     // Call function getNewName to get the name and file to save the pdf
-    targetFile = getNewName(postfix);
+    targetFile = getNewName(postfix, dirName);
 
     // Call function getPNGOptions get the PNGExportOptions for the files
     pngExportOpts = getPNGOptions(resolution);
@@ -88,9 +89,9 @@ name is the same as the source file.
 
 **********************************************************/
 
-function getNewName(postfix)
+function getNewName(postfix, dirName)
 {
-    var ext, docName, newName, saveInFile, docName;
+    var ext, docName, newName, saveInFile, docName, folderName;
     docName = sourceDoc.name;
     ext = postfix + '.png'; // new extension for png file
     newName = "";
@@ -100,7 +101,15 @@ function getNewName(postfix)
         newName += docName[i];
     }
     var filename = newName.replace('_pantone', '');
-    var folderName = filename + ".imageset";
+
+    if (dirName.length > 0) {
+        folderName = dirName;
+    }
+    else {
+        folderName = filename + ".imageset";
+    }
+
+
     filename += ext; // full png name of the file
 
     var fileFolder = new Folder(destFolder + "/" + folderName);
